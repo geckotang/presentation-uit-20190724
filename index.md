@@ -42,8 +42,9 @@ ndrugerさんの作った[javascriptを使わず、html + cssだけでクリッ�
 ## CSS PANICを支えている技術
 
 - <span class="-hl">状態の管理</span>
-  - <span class="-hl">`input`要素</span>
-  - <span class="-hl">`:checked`擬似クラス</span>
+  - <span class="-hl">プレイ画面の制限時間の管理</span>
+  - <span class="-hl">ワニをクリックしたとき</span>
+  - <span class="-hl">もう一度遊ぶ</span>
 - 見た目の装飾
     - base64 encode dataURI
     - `apperance`プロパティ
@@ -113,7 +114,7 @@ ndrugerさんの作った[javascriptを使わず、html + cssだけでクリッ�
 </div>
 
 <hr>
-<small>今だったらtransitionでやるかもしれないけど、当時はこうしてたらしい。</small>
+<small>今だったらまた違った方法でやるかもしれないけど、当時はこうしてたらしい。</small>
 
 ---
 
@@ -175,6 +176,75 @@ ndrugerさんの作った[javascriptを使わず、html + cssだけでクリッ�
 
 ---
 
+![](/media/radio-to-wani.png)
+
+「ワニはラジオボタンでできている」
+
+---
+
+### ラジオボタンの話 1/2
+
+ラジオボタンの動作をおさらい
+
+```html
+<input type="radio" name="foo" checked> 項目A
+<input type="radio" name="foo"> 項目A
+```
+
+```css
+input[type="radio"] {  }
+input[type="radio"]:checked {  }
+```
+
+- 同じname属性値を持つラジオボタン内で1つだけcheckedにできる
+- 一度checkedになったラジオボタンはもう一度押してもチェックを外れることがない
+- `input[type="checkbox"]`でも`:checked`が使える。ただチェックが外せてしまう
+
+---
+
+### ラジオボタンの話 2/2
+
+:checkedでなにかする
+
+<div class="split">
+<div class="split-left">
+
+<video data-autoplay src="./media/checked.mp4" loop controls></video>
+
+- `input:checked`と隣接セレクタ等を組み合わせれば、チェックされたときにいろいろな要素をいじることができる
+- ON/OFFできる便利なスイッチ
+
+</div>
+<div class="split-right">
+
+```html
+<label>
+  <input type="radio" name="foo">項目
+  <span>←選択中</span>
+</label>
+<label>
+  <input type="radio" name="foo">項目
+  <span>←選択中</span>
+</label>
+```
+
+```css
+label { display: block; }
+input + span { display: none; color: tomato; }
+input:checked + span { display: inline; }
+```
+
+</div>
+</div>
+
+---
+
+![](/media/radio-to-wani.png)
+
+「ワニはラジオボタンでできている」
+
+---
+
 ### 2-1. 吹き出しを表示する
 
 <div class="split">
@@ -215,40 +285,6 @@ ndrugerさんの作った[javascriptを使わず、html + cssだけでクリッ�
 
 ---
 
-### :checkedでなにかする
-
-<div class="split">
-<div class="split-left">
-
-<video data-autoplay src="./media/checked.mp4" loop controls></video>
-
-- `input:checked`と隣接セレクタ等を組み合わせれば、チェックされたときにいろいろな要素をいじることができる
-- ON/OFFできる便利なスイッチ
-
-</div>
-<div class="split-right">
-
-```html
-<label>
-  <input type="radio" name="foo">項目
-  <span>←選択中</span>
-</label>
-<label>
-  <input type="radio" name="foo">項目
-  <span>←選択中</span>
-</label>
-```
-
-```css
-label { display: block; }
-input + span { display: none; color: tomato; }
-input:checked + span { display: inline; }
-```
-
-</div>
-</div>
----
-
 ### 2-2. スコアのカウントアップ
 
 <div class="split">
@@ -270,9 +306,13 @@ input:checked + span { display: inline; }
   <input type="radio" name="enemy_10" id="score_10" class="score" checked>
   <div class="score" id="score_11"></div>
 </div>
+<div id="enemy">
+  <input type="radio" name="enemy_1"  id="enemy_1"  class="enemys"><div class="effect"></div>
+
 ```
 
 ```css
+/* チェックされていないとき=ワニがチェックされたとき */
 .score{
     position:relative;
     display:block;
@@ -283,6 +323,7 @@ input:checked + span { display: inline; }
     -moz-appearance: button;
     -webkit-transition:.1s all linear;
 }
+/* 初期状態：高さ0 */
 .score:checked{
     position:absolute;
     top:0px;
@@ -302,8 +343,15 @@ input:checked + span { display: inline; }
 
 <video data-autoplay src="./media/countup.mp4" loop controls></video>
 
-- スプライト画像をずらして表示させている
+<div style="font-size:75%;">
+
+- ワニと対になるスコア用ラジオボタンが画像の上にある
+- ワニがチェックされると、対になるスコア用のラジオボタンのチェックが外れる
+- スコア用のラジオボタンが一定の高さに変化する。
+- するとスプライト画像がずれてカウントアップしているように見える
 - [codepen](https://codepen.io/geckotang/pen/bXEego)
+
+</div>
 
 </div>
 <div class="split-right">
@@ -376,8 +424,9 @@ input:checked + span { display: inline; }
 ## CSS PANICを支えている技術
 
 - 状態の管理
-  - `input`要素
-  - `:checked`擬似クラス
+  - プレイ画面の制限時間の管理
+  - ワニをクリックしたとき
+  - もう一度遊ぶ
 - <span class="-hl">見た目の装飾</span>
     - <span class="-hl">base64 encode dataURI</span>
     - <span class="-hl">`apperance`プロパティ</span>
@@ -411,17 +460,20 @@ input:checked + span { display: inline; }
 
 ### 2. ラジオボタンの見た目
 
-- ラジオボタン（input要素）の見た目を自由にしたい
+![](/media/radio-to-wani.png)
+
+- ラジオボタン（input要素）の見た目を変えたい
 - `appearance`プロパティを使って見た目を変えられるようにする
-  - CSS PANICでは`-webkit-apperance: button;`を使っているけど`none`でよい気がする。
+  - CSS PANICでは`-webkit-apperance: button;`を使っている。今思えば`none`でよい...
 
 ---
 
 ## CSS PANICを支えている技術
 
 - 状態の管理
-  - `input`要素
-  - `:checked`擬似クラス
+  - プレイ画面の制限時間の管理
+  - ワニをクリックしたとき
+  - もう一度遊ぶ
 - 見た目の装飾
     - base64 encode dataURI
     - `apperance`プロパティ
